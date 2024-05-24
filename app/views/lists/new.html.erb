@@ -1,0 +1,10 @@
+<p>New</p>
+<h1>Créer une nouvelle liste</h1>
+
+<%= form_with model: @list, url: lists_path do |form| %>
+  <div class="form-group">
+    <%= form.label :name, "Nom de la liste" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+  <%= form.submit "Créer", class: "btn btn-primary" %>
+<% end %>
