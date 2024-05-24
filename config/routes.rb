@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   # config/routes.rb
   resources :lists do
-    resources :bookmarks, only: [:new, :create, :destroy]
+    resources :bookmarks, only: [:new, :create]
   end
   resources :bookmarks, only: :destroy
 end

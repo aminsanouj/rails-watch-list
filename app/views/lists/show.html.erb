@@ -1,22 +1,52 @@
-<h1><%= @list.name %></h1>
-
-<h2>Add a new bookmark</h2>
-<%= simple_form_for [@list, @bookmark] do |f| %>
-  <%= f.association :movie, collection: Movie.all, label: "Select a movie" %>
-  <%= f.input :comment %>
-  <%= f.submit "Add Bookmark" %>
-<% end %>
-
-<ul>
-  <% @list.bookmarks.each do |bookmark| %>
-    <% if bookmark.movie %>
-      <li>
-        <%= image_tag bookmark.movie.poster_url, size: "50x75" %>
-        <%= bookmark.movie.title %> - <%= bookmark.comment %>
-        <%= link_to 'Delete', bookmark, data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %>
-      </li>
+<div class="cover mb-4 d-flex align-items-center justify-content-center bg-dark" style="background-image: url('<%= asset_path('list_background.jpg') %>'); background-size: cover; background-position: center bottom; background-attachment: fixed; height: 150px;">
+  <div class="text-center text-white">
+    <h1><%= @list.name %></h1>
+    <h3 class="typed-js" data-controller="typed-js"></h3>
+  </div>
+</div>
+<div class="container mb-5">
+  <div class="d-flex justify-content-between my-4">
+    <span class="movie-tag"><%= pluralize(@list.movies.size, "movie") %></span>
+    <span class="mb-2 d-block"><small><em class="text-muted"><%= "You haven't saved any movies yet!" if @list.movies.empty? %></em></small></span>
+    <div>
+      <%= link_to "delete this list", list_path(@list), class: "btn btn-secondary", data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this list?" } %>
+      <%= link_to 'Retour à ma liste de films', lists_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+  <div class="row my-2">
+    <% @list.movies.each do |movie| %>
+      <% bookmark = Bookmark.find_by(list: @list, movie: movie) %>
+    <div class="col-12 col-sm-6 mb-4" data-aos="zoom-in">
+      <div class="bg-white rounded shadow h-100 d-flex flex-column">
+        <div class="position-relative w-100" style="height: 400px;">
+          <%= image_tag movie.poster_url, alt: movie.title, class: "position-absolute top-0 start-0 w-100 h-100", style: "object-fit: cover;" %>
+          <div class="position-absolute top-0 end-0 m-3">
+            <%= link_to bookmark_path(bookmark), method: :delete, class: "p-2 rounded text-secondary text-decoration-none", data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to remove #{movie.title} from your list?" } do %>
+              <div class="bg-secondary d-inline-block rounded p-1">
+               <i class="fas fa-times fa-lg text-light"></i>
+              </div>
+            <% end %>
+        </div>
+        </div>
+        <div class="p-3 d-flex flex-column flex-grow-1">
+          <strong class="mb-2"><%= movie.title %> <span class="text-muted font-weight-normal">• <%= movie.rating %> <i class="fas fa-star star-yellow"></i></span></strong>
+          <small class="text-muted mb-3"><%= movie.overview %></small>
+          <div class="mt-auto">
+            <i class="fas fa-quote-left me-2"></i><small class="d-block"><%= bookmark.comment %></small>
+          </div>
+        </div>
+      </div>
+    </div>
     <% end %>
-  <% end %>
-</ul>
-
-<%= link_to 'Back to lists', lists_path %>
+    <div class="col-12 col-sm-6">
+      <div class="bg-white rounded p-3">
+        <h5>Add your review</h5>
+        <%= simple_form_for [@list, @bookmark] do |f| %>
+          <%= f.association :movie, collection: Movie.all, label: "Selectionner un film" %>
+          <%= f.input :comment, placeholder: "Add your review here..." %>
+          <%= f.submit class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
